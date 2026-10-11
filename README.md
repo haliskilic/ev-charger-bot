@@ -378,6 +378,8 @@ More in the install guide's troubleshooting section.
 
 If ev-charger-bot is useful to you, please consider **[sponsoring my work on GitHub Sponsors ❤️](https://github.com/sponsors/haliskilic)** — sponsorships pay for test hardware and the time to keep the project maintained.
 
+No GitHub account? You can also **[buy me a coffee ☕](https://buymeacoffee.com/haliskilic)**.
+
 ---
 
 ## License
