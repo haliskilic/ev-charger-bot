@@ -39,6 +39,7 @@ phase_loss_min_a = 1.0   # a phase below this while others carry current → "ph
 power_drop_pct = 50      # sudden drop versus the 5-minute average
 no_current_s = 90        # "charging" state with 0 A for this long → warning
 debounce_s = 5           # state changes shorter than this are ignored
+phases = 3               # 3 for a three-phase charger, 1 for single-phase (disables phase-loss/imbalance warnings)
 
 [reports]
 daily_time = "23:55"

@@ -109,8 +109,10 @@ class Reports:
             return self.L("w_voltage", time=t, phase=w.get("phase"), v=w.get("v"))
         if c == "power_drop":
             return self.L("w_power_drop", time=t, a=self.F.num(w.get("a"), 1), b=self.F.num(w.get("b"), 1))
-        if c == "setting":
-            return self.L("w_setting", time=t, text=w.get("text", ""))
+        if c == "current_limit":
+            return self.L("w_setting", time=t, text=self.L("n_current_limit", old=w.get("old"), new=w.get("new")))
+        if c == "work_mode":
+            return self.L("w_setting", time=t, text=self.L("n_work_mode", old=self.mode(w.get("old")), new=self.mode(w.get("new"))))
         return self.L("w_" + c, time=t)
 
     def note_text(self, n: dict) -> str:

@@ -145,14 +145,14 @@ A: 229 V · 15.9 A · 3.64 kW
 B: 226 V · 15.8 A · 3.57 kW
 C: 227 V · 15.9 A · 3.61 kW
 Average power: 10.7 kW
-Cost: 32.93 TL
+Cost: 2.52 €
 Estimated added: +38% (≈ +44 km) — estimate
 Latest finish: ~20:45 (assuming an empty battery)
 ```
 ```
 📊 Interim report · 19:35 · charging for 57 min
 Delivered ~10.2 kWh · avg 10.7 kW · peak 11.0 kW
-Cost 39.98 TL · estimated +47% (≈ +54 km) — estimate
+Cost 3.06 € · estimated +47% (≈ +54 km) — estimate
 Voltage 225–231 V · current 15.8–16.0 A/phase
 No warnings
 ```
@@ -174,7 +174,7 @@ Power: avg 4.29 kW · peak 4.67 kW
 Phase A: 225–229 V · 7.7 A (avg 7.7 A)
 Phase B: 212–216 V · 7.6–7.7 A (avg 7.6 A)
 Phase C: 219–223 V · 7.5–7.6 A (avg 7.6 A)
-Cost: 2.20 TL (3.92 TL/kWh)
+Cost: 0.17 € (0.30 €/kWh)
 Estimated added: +3% (≈ +3 km) — estimate
 End reason: car ended charging
 During the session: 1 manual stop(s), 1 resume(s) · no warnings
@@ -186,14 +186,14 @@ During the session: 1 manual stop(s), 1 resume(s) · no warnings
 
 ```
 📅 Daily summary · Sunday, 11 October 2026
-2 session(s) · 13.4 kWh · 52.53 TL · 2 h 10 min charging
+2 session(s) · 13.4 kWh · 4.02 € · 2 h 10 min charging
 Average per session 6.7 kWh · peak power 11.0 kW
 vs. yesterday: no charging (+13.4 kWh)
 Total according to bot records: 4,036.4 kWh (the charger has no lifetime counter)
 ```
 ```
 📆 Weekly summary · 5–11 October 2026
-5 session(s) · 48.2 kWh · 188.94 TL · 6 h 40 min charging
+5 session(s) · 48.2 kWh · 14.46 € · 6 h 40 min charging
 Average per session 9.6 kWh · peak power 11.0 kW
 vs. previous week: kWh +12% · cost +12%
 Total according to bot records: 4,036.4 kWh (the charger has no lifetime counter)
@@ -203,14 +203,14 @@ Total according to bot records: 4,036.4 kWh (the charger has no lifetime counter
 Charger online · car plugged in, waiting
 Current limit 32 A · Mode: charge now · No fault
 Voltage: — (phase data is zero while no current flows)
-Last session: 11 Oct 18:13–18:22 · 0.56 kWh · 2.20 TL · 7 min charging · car ended charging
+Last session: 11 Oct 18:13–18:22 · 0.56 kWh · 0.17 € · 7 min charging · car ended charging
 Last data 6 s ago · bot running for 2 h 11 min
 ```
 ```
 🕓 Recent sessions
-11 Oct 18:13–18:22 · 0.56 kWh · 2.20 TL · 7 min charging · car ended charging
-01 Oct 18:41–06:41 · 15.07 kWh · 59.07 TL · plugged 12 h · Smart Life record
-30 Sep 18:30–06:31 · 13.94 kWh · 54.64 TL · plugged 12 h · Smart Life record
+11 Oct 18:13–18:22 · 0.56 kWh · 0.17 € · 7 min charging · car ended charging
+01 Oct 18:41–06:41 · 15.07 kWh · 4.52 € · plugged 12 h · Smart Life record
+30 Sep 18:30–06:31 · 13.94 kWh · 4.18 € · plugged 12 h · Smart Life record
 ```
 </details>
 
@@ -277,7 +277,7 @@ Both command sets work regardless of the active language. Replies go to the topi
 ## Configuration
 
 - **`.env`** — secrets and ids (bot token, chat/topic/owner ids, device id, Local Key, IP, protocol version, optional Tuya cloud keys). Readable only by the service user (`chmod 600`). Template: [`.env.example`](.env.example).
-- **`config.toml`** — everything else, with comments: language, intervals, quiet hours, tariff (single or time-of-use with day 06–17 / peak 17–22 / night 22–06 bands), car parameters (battery kWh, charging efficiency, consumption kWh/100 km), warning thresholds, report times, retention. See [`config.toml`](config.toml).
+- **`config.toml`** — everything else, with comments: language, intervals, quiet hours, tariff (single or time-of-use with day 06–17 / peak 17–22 / night 22–06 bands), car parameters (battery kWh, charging efficiency, consumption kWh/100 km), warning thresholds (including `phases = 1` for single-phase chargers), report times, retention. See [`config.toml`](config.toml).
 - Values changed from Telegram (`/settings`, `/tariff`, `/language`) are stored in the database and override `config.toml`.
 
 Default language is **English**; set `language = "tr"` or send `/language tr` for Turkish.
@@ -291,7 +291,10 @@ Default language is **English**; set `language = "tr"` or send `/language tr` fo
 - Commands that change settings (`/settings`, `/tariff`, `/language`) are accepted only from `TELEGRAM_OWNER_ID`; group members can read everything else.
 - The bot is **read-only** towards the charger: there is no code path that sends `switch`, `charge_cur_set`, `work_mode` or any other command.
 - Secrets never appear in logs; library debug logging is disabled.
-- Tests in [`tests/test_security.py`](tests/test_security.py) assert all of the above.
+- No inbound ports: Telegram is reached by long polling and the charger by an outgoing LAN connection, so nothing needs to be exposed on your router or firewall.
+- On Linux the service runs as an unprivileged user with systemd hardening (`NoNewPrivileges`, `ProtectSystem=strict`, `PrivateTmp`); only `data/` is writable.
+- Dependencies are pinned in `requirements.txt`.
+- Tests in [`tests/test_security.py`](tests/test_security.py) assert the access rules above.
 
 Keep the bot token secret (anyone with the token can read your group's commands). If it leaks, revoke it in @BotFather (`/revoke`) and update `.env`.
 

@@ -275,7 +275,7 @@ Her iki komut kümesi de etkin dilden bağımsız çalışır. Yanıtlar, komutu
 ## Yapılandırma
 
 - **`.env`** — gizli bilgiler ve kimlikler (bot token'ı, grup/konu/sahip kimlikleri, Device ID, Local Key, IP, protokol sürümü, isteğe bağlı Tuya bulut anahtarları). Yalnızca servis kullanıcısı okuyabilmeli (`chmod 600`). Şablon: [`.env.example`](.env.example).
-- **`config.toml`** — geri kalan her şey, açıklamalarıyla: dil, aralıklar, sessiz saatler, tarife (tek fiyat ya da üç zamanlı: gündüz 06–17 / puant 17–22 / gece 22–06), araç parametreleri (batarya kWh, şarj verimi, tüketim kWh/100 km), uyarı eşikleri, rapor saatleri, saklama süreleri. Bkz. [`config.toml`](config.toml).
+- **`config.toml`** — geri kalan her şey, açıklamalarıyla: dil, aralıklar, sessiz saatler, tarife (tek fiyat ya da üç zamanlı: gündüz 06–17 / puant 17–22 / gece 22–06), araç parametreleri (batarya kWh, şarj verimi, tüketim kWh/100 km), uyarı eşikleri (tek fazlı cihazlar için `phases = 1` dahil), rapor saatleri, saklama süreleri. Bkz. [`config.toml`](config.toml).
 - Telegram'dan değiştirilen değerler (`/ayar`, `/tarife`, `/dil`) veritabanında tutulur ve `config.toml`'u ezer.
 
 Varsayılan dil **İngilizce**'dir; Türkçe için `language = "tr"` yazın ya da `/dil tr` gönderin.
@@ -289,7 +289,10 @@ Varsayılan dil **İngilizce**'dir; Türkçe için `language = "tr"` yazın ya d
 - Ayar değiştiren komutlar (`/ayar`, `/tarife`, `/dil`) yalnızca `TELEGRAM_OWNER_ID`'den kabul edilir; grup üyeleri geri kalan her şeyi okuyabilir.
 - Bot cihaza karşı **salt okunur**dur: `switch`, `charge_cur_set`, `work_mode` ya da başka bir komut gönderen hiçbir kod yolu yoktur.
 - Gizli bilgiler loglara düşmez; kütüphanelerin ayrıntılı logları kapalıdır.
-- [`tests/test_security.py`](tests/test_security.py) bunların tümünü doğrular.
+- Dışarıya açık port yok: Telegram'a uzun yoklamayla (long polling), cihaza giden yönde LAN bağlantısıyla ulaşılır; modemde ya da güvenlik duvarında hiçbir şey açmanız gerekmez.
+- Linux'ta servis yetkisiz bir kullanıcıyla ve systemd sertleştirmesiyle çalışır (`NoNewPrivileges`, `ProtectSystem=strict`, `PrivateTmp`); yalnızca `data/` yazılabilir.
+- Bağımlılıklar `requirements.txt`'te sabitlenmiştir.
+- [`tests/test_security.py`](tests/test_security.py) yukarıdaki erişim kurallarını doğrular.
 
 Bot token'ını gizli tutun. Sızarsa @BotFather'da `/revoke` ile yenileyip `.env`'i güncelleyin.
 

@@ -73,6 +73,7 @@ EN: dict[str, str] = {
     "er_bot_down_unplug": "unplugged while the bot was down",
     "er_smartlife": "Smart Life record",
     "er_ongoing": "in progress",
+    "er_unplugged": "cable unplugged",
     # --- session warnings / notes (stored as codes) ---
     "w_outage_start": "outage began {time}",
     "w_outage_end": "outage ended {time} ({dur})",
@@ -327,6 +328,7 @@ TR: dict[str, str] = {
     "er_bot_down_unplug": "bot kapalıyken çıkarıldı",
     "er_smartlife": "Smart Life kaydı",
     "er_ongoing": "sürüyor",
+    "er_unplugged": "kablo çıkarıldı",
     "w_outage_start": "kesinti başladı {time}",
     "w_outage_end": "kesinti bitti {time} ({dur})",
     "w_reboot": "cihaz yeniden başladı {time}",

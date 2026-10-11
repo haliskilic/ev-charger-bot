@@ -46,7 +46,7 @@ venv/bin/python -m tinytuya scan          # Windows: venv\Scripts\python -m tiny
 ~20 sn sonra ağdaki tüm Tuya cihazlarını listeler, örn.:
 
 ```
-Unknown v3.4 Device   Product ID = bktb3jskdic1ar2t  [Valid Broadcast]:
+Unknown v3.4 Device   Product ID = bkxxxxxxxxxxxxxx  [Valid Broadcast]:
     Address = 192.168.1.129   Device ID = bfd8xxxxxxxxxxxxxxxxxx   Version = 3.4
 ```
 

@@ -424,11 +424,12 @@ class Monitor:
             if old is not None and new != 6:
                 self._last_cur_set_change = ts
                 self._emit(ts, "setting", self.R.setting_changed(ts, "what_current_limit", f"{old} A", f"{new} A"))
-                self._warn({"c": "setting", "t": ts, "text": self.R.L("n_current_limit", old=old, new=new)})
+                self._warn({"c": "current_limit", "t": ts, "old": old, "new": new})
         if DP.DP_WORK_MODE in changes and not in_reboot:
             old, new = changes[DP.DP_WORK_MODE]
             if old is not None:
                 self._emit(ts, "setting", self.R.setting_changed(ts, "what_work_mode", self.R.mode(old), self.R.mode(new)))
+                self._warn({"c": "work_mode", "t": ts, "old": old, "new": new})
         if DP.DP_TIMER in changes and not in_reboot:
             old, new = changes[DP.DP_TIMER]
             if old is not None:
@@ -773,7 +774,7 @@ class Monitor:
             else:
                 seg.timers.pop(f"v_{k}_since", None)
         amps = sorted(currents.values())
-        if amps[-1] > 5.0:
+        if amps[-1] > 5.0 and self.s.phases >= 3:  # phase-loss/imbalance checks only make sense on three-phase installations
             if amps[0] < self.s.phase_loss_min_a:
                 self._persisting(ts, seg, "phase_loss", lambda: self.R.warn_phase_loss(ts, currents))
             elif (amps[-1] - amps[0]) / amps[-1] * 100.0 > self.s.imbalance_pct:

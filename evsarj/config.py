@@ -108,6 +108,7 @@ class Settings:
     power_drop_pct: float = 50.0
     no_current_s: int = 90
     debounce_s: int = 5
+    phases: int = 3  # 1 or 3: phase-loss/imbalance warnings are disabled on single-phase installations
     # reports
     daily_time: str = "23:55"
     weekly_time: str = "09:00"
@@ -160,6 +161,7 @@ class Settings:
         s.power_drop_pct = float(t.get("power_drop_pct", s.power_drop_pct))
         s.no_current_s = int(t.get("no_current_s", s.no_current_s))
         s.debounce_s = int(t.get("debounce_s", s.debounce_s))
+        s.phases = 1 if int(t.get("phases", s.phases)) < 3 else 3
         r = section("reports")
         s.daily_time = r.get("daily_time", s.daily_time)
         s.weekly_time = r.get("weekly_time", s.weekly_time)
