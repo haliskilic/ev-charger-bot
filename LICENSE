@@ -1,0 +1,76 @@
+ev-charger-bot — Non-Commercial Source-Available License
+==========================================================
+
+Copyright (c) 2026 Halis KILIÇ. All rights reserved.
+Contact: haliskilic90@gmail.com
+
+This software, including its source code, documentation and assets
+(collectively, the "Software"), is the property of Halis KILIÇ (the "Author")
+and is protected by copyright and other intellectual property laws. The Software
+is licensed, not sold, and only under the terms below. By using the Software you
+accept these terms.
+
+1. OWNERSHIP
+   The Author retains all right, title and interest in and to the Software,
+   including all intellectual property rights. No ownership is transferred.
+
+2. FREE NON-COMMERCIAL LICENSE
+   The Author grants you a worldwide, royalty-free, non-exclusive,
+   non-transferable license to download, install, run, study and modify the
+   Software for PERSONAL and NON-COMMERCIAL purposes, such as monitoring the
+   electric-vehicle charger of your own home. Non-commercial use is free of
+   charge. If the Software is useful to you, a voluntary donation to the Author
+   is appreciated (see the "Support" section of the README); donating is not a
+   condition of this license.
+
+3. COMMERCIAL USE REQUIRES A LICENSE
+   Any COMMERCIAL use — including, without limitation, use by or for a company,
+   use in a product or service that is sold, rented or offered for a fee,
+   hosting the Software as a service for third parties, use at commercial
+   charging sites, fleet or car-park operation, resale, or bundling with
+   hardware that is sold — is permitted ONLY under a separate written commercial
+   license agreement obtained from the Author. To obtain one, contact the Author
+   at the address above.
+
+4. REDISTRIBUTION AND MODIFICATIONS
+   You may share unmodified copies of the Software, and you may share your
+   modifications, in each case free of charge, non-commercially, and only with
+   this License text and all copyright notices intact. You may not sell,
+   sublicense or re-license the Software or any modification of it. Modified
+   versions must be clearly marked as modified. Contributions you send to the
+   Author (for example pull requests) are given under this same License and may
+   be included in future versions, including commercially licensed ones.
+
+5. RESTRICTIONS
+   You may not remove or alter any copyright, trademark or proprietary notices.
+   You may not use the Author's name to endorse or promote products derived
+   from the Software without written permission. You may not use the Software
+   to send commands to charging equipment you are not authorised to control.
+
+6. THIRD-PARTY COMPONENTS
+   The Software uses third-party open-source libraries distributed under their
+   own licenses (see THIRD-PARTY-NOTICES.md). Those components remain governed
+   by their respective licenses; this License governs only the Author's own
+   original code, documentation and assets.
+
+7. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. The Software observes
+   electrical equipment; it does not control it and it is not a safety device.
+
+8. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR ITS USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+9. TERMINATION
+   Any breach of this License automatically terminates your rights under it,
+   and you must cease all use and destroy all copies of the Software. Sections
+   1, 5, 7, 8 and 9 survive termination.
+
+10. GOVERNING LAW
+   This License is governed by the laws of the Republic of Türkiye. Disputes are
+   subject to the courts of Türkiye.
+
+To obtain a commercial license, contact: haliskilic90@gmail.com

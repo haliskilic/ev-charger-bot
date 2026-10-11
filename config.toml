@@ -1,0 +1,52 @@
+# ev-charger-bot settings. Secrets (bot token, Local Key, chat ids) live in .env, not here.
+# Values changed from Telegram (/settings, /tariff, /language) are stored in the database and override this file.
+
+[bot]
+language = "en"          # "en" or "tr" — language of all Telegram messages (change later with /language)
+db_path = "data/evsarj.db"
+timezone = "Europe/Istanbul"
+
+[intervals]
+live_status_min = 5      # how often the single "live status" message is edited while charging
+interim_report_min = 30  # interim report while charging
+poll_charging_s = 20     # full status query interval while charging
+poll_idle_s = 60         # while idle
+offline_after_s = 90     # no data for this long → "offline"
+
+[quiet_hours]            # messages in this window are sent without notification sound
+start = "23:00"
+end = "07:00"
+
+[tariff]
+currency = "€"           # label only (e.g. "€", "TL", "$")
+type = "single"          # "single" or "tou" (time-of-use: day 06–17, peak 17–22, night 22–06)
+single_price = 0.30      # per kWh
+day = 0.30
+peak = 0.30
+night = 0.30
+
+[car]                    # defaults: Seat Leon e-Hybrid (PHEV)
+battery_kwh = 19.7       # net capacity, used for the "estimated % added"
+charge_efficiency = 0.90 # wall-to-battery efficiency
+consumption_kwh_100km = 17.0
+max_ac_kw = 11.0
+
+[thresholds]
+voltage_min = 207        # V (230 V −10 %)
+voltage_max = 253        # V (230 V +10 %)
+imbalance_pct = 30       # current difference between phases
+phase_loss_min_a = 1.0   # a phase below this while others carry current → "phase loss"
+power_drop_pct = 50      # sudden drop versus the 5-minute average
+no_current_s = 90        # "charging" state with 0 A for this long → warning
+debounce_s = 5           # state changes shorter than this are ignored
+
+[reports]
+daily_time = "23:55"
+weekly_time = "09:00"    # Mondays
+monthly_time = "09:00"   # 1st of the month
+no_charge_day_message = true
+
+[retention]              # rolling retention so the database never fills the disk
+samples_days = 90        # raw samples (every value change, ≥ 1 row/min)
+transitions_months = 12  # state transitions
+events_months = 24       # event texts (sessions are kept forever; they are tiny)

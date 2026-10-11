@@ -1,0 +1,23 @@
+[Unit]
+Description=EV charger monitoring bot (Telegram)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=evsarj
+Group=evsarj
+WorkingDirectory=/opt/ev-charger-bot
+Environment=EVSARJ_HOME=/opt/ev-charger-bot
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/ev-charger-bot/venv/bin/python -m evsarj.main
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ev-charger-bot/data
+
+[Install]
+WantedBy=multi-user.target
