@@ -4,6 +4,8 @@
 
 # ev-charger-bot
 
+[![Lisans: AGPL-3.0](https://img.shields.io/badge/Lisans-AGPL--3.0-blue.svg)](LICENSE) [![Ticari lisans](https://img.shields.io/badge/Ticari-lisans%20mevcut-green.svg)](COMMERCIAL_LICENSE.md) [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/haliskilic)
+
 **Tuya / Smart Life altyapılı bir elektrikli araç şarj cihazını yerel ağ üzerinden 7/24 izleyen ve şarj oturumlarını, maliyeti, uyarıları ve günlük/haftalık/aylık özetleri Telegram grubunuzdaki bir konuya (topic) Türkçe ya da İngilizce raporlayan, salt okunur bir bot.**
 
 > **Hici 22 kW** üç fazlı duvar tipi şarj cihazı (Tuya kategorisi `qccdz`, protokol 3.4) ve **Seat Leon e-Hybrid** PHEV ile geliştirilip ölçülerek doğrulandı. Diğer Tuya `qccdz` cihazları aynı veri noktalarını kullandığı için çoğunlukla değişiklik gerekmeden çalışır.
@@ -372,10 +374,19 @@ Daha fazlası kurulum kılavuzunun sorun giderme bölümünde.
 
 ## Projeye destek
 
-ev-charger-bot kişisel ve ticari olmayan kullanım için ücretsizdir. Zaman ya da elektrik parası kazandırıyorsa bağış memnuniyetle karşılanır — depo açıklamasındaki **Bağış** bağlantısına bakın ya da yazara haliskilic90@gmail.com adresinden ulaşın. Ticari kullanım (şirketler, filolar, şarj istasyonları, yeniden satış) ticari lisans gerektirir — aşağıya bakın.
+ev-charger-bot işine yarıyorsa **[GitHub Sponsors üzerinden destek olmayı ❤️](https://github.com/sponsors/haliskilic)** düşünebilirsin — sponsorluklar test donanımını ve projenin bakımına ayrılan zamanı karşılıyor.
 
 ---
 
 ## Lisans
 
-Telif hakkı © 2026 Halis KILIÇ. Kaynağı açık, **ticari olmayan lisans**: kişisel ve ticari olmayan kullanım ücretsiz (bağış teşvik edilir), ticari kullanım yalnızca yazardan alınacak yazılı lisansla. Tam metin (İngilizce, bağlayıcı olan) için [LICENSE](LICENSE), kullanılan açık kaynak kütüphaneler için [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+ev-charger-bot **çift lisanslıdır**:
+
+- **Açık kaynak — [GNU AGPL-3.0](LICENSE):** kullanmak, incelemek, değiştirmek ve paylaşmak serbesttir. Dağıtırsan ya da değiştirilmiş bir sürümü ağ servisi olarak çalıştırırsan, tüm kaynak kodunu AGPL-3.0 ile sunman gerekir.
+- **Ticari lisans:** AGPL-3.0 yükümlülükleri olmadan kapalı kaynak ürün, cihaz ya da SaaS için — bkz. [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) veya **mail@haliskilic.com.tr**.
+
+Kullanılan açık kaynak kütüphaneler kendi lisanslarını korur — bkz. [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+Katkılar memnuniyetle karşılanır! İlk pull request'inde tek seferlik bir [Katkıcı Lisans Sözleşmesi (CLA)](https://gist.github.com/haliskilic/7a7fdcd355f54d1db6943959d7b76823) imzalaman istenir; katkının telif hakkı sende kalır.
+
+Telif © 2026 Halis KILIÇ.

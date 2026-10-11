@@ -4,6 +4,8 @@
 
 # ev-charger-bot
 
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE) [![Commercial license](https://img.shields.io/badge/Commercial-license%20available-green.svg)](COMMERCIAL_LICENSE.md) [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/haliskilic)
+
 **A read-only Telegram bot that watches a Tuya / Smart Life based EV charger over your local network 24/7 and reports charging sessions, costs, warnings and daily/weekly/monthly summaries to a Telegram group topic — in English or Turkish.**
 
 > Built and verified on a **Hici 22 kW** three-phase wall box (Tuya category `qccdz`, protocol 3.4) charging a **Seat Leon e-Hybrid** PHEV. Other Tuya `qccdz` chargers use the same data points and should work with little or no change.
@@ -374,10 +376,19 @@ More in the install guide's troubleshooting section.
 
 ## Support the project
 
-ev-charger-bot is free for personal, non-commercial use. If it saves you time or electricity money, a donation is appreciated — see the **Donate** link in the repository description or contact the author at haliskilic90@gmail.com. Commercial use (companies, fleets, charging sites, resale) requires a commercial license — see below.
+If ev-charger-bot is useful to you, please consider **[sponsoring my work on GitHub Sponsors ❤️](https://github.com/sponsors/haliskilic)** — sponsorships pay for test hardware and the time to keep the project maintained.
 
 ---
 
 ## License
 
-Copyright © 2026 Halis KILIÇ. Source-available under a **non-commercial license**: free for personal and non-commercial use (donations welcome), commercial use only with a written license from the author. See [LICENSE](LICENSE) for the full terms and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the open-source libraries used.
+ev-charger-bot is **dual-licensed**:
+
+- **Open source — [GNU AGPL-3.0](LICENSE):** free to use, study, modify and share. If you distribute it, or run a modified version as a network service, you must make your complete source code available under the AGPL-3.0.
+- **Commercial license:** for closed-source products, devices or SaaS without the AGPL-3.0 obligations — see [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) or email **mail@haliskilic.com.tr**.
+
+The open-source libraries it uses keep their own licenses — see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+Contributions are welcome! On your first pull request you'll be asked to sign a one-time [Contributor License Agreement](https://gist.github.com/haliskilic/7a7fdcd355f54d1db6943959d7b76823); you keep the copyright to your work.
+
+Copyright © 2026 Halis KILIÇ.
