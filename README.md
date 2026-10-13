@@ -101,7 +101,7 @@ Session: ~19.80 kWh · 1 h 52 min charging · avg 10.60 kW
 ```
 ```
 ⏹ Car ended charging · 18:22
-Power cut off abruptly (the battery may be full).
+Power cut off abruptly: the car stopped the charge (timer, car-side fault or a full battery).
 Session: ~0.54 kWh · 7 min charging · avg 4.64 kW
 ```
 ```
@@ -339,9 +339,11 @@ The full, measured data-point map (numbers, codes, scaling, observed values and 
 
 - `work_state` (DP3) only ever showed `charger_free` / `charger_wait` / `charger_charging` on the reference device; the bot still handles the other enum values.
 - Per-phase voltage/current/power arrive as 7-byte raw records (DP6/7/8) roughly every 6 s; the sum matches `power_total` (DP9) exactly.
-- The session counter (DP25) is sent only on unplug or when the charger closes its own record (it does that after **12 hours** of charging, or after 20 hours plugged in without charging). The bot therefore also integrates power readings and shows both numbers.
+- The session counter (DP25) is sent only on unplug or when the charger closes its own record (it does that after **12 hours** of charging, or after 20 hours plugged in without charging). The bot therefore also integrates power readings and shows both numbers. A quick unplug/re-plug also closes a record, so one session can span several records; the session total is their sum and the summary lists the parts.
 - The charger pushes most changes on its own, but not all (e.g. `charging` sometimes lags power), so the bot listens **and** polls (20 s charging / 60 s idle). A second connection from the Smart Life app does not disturb it.
 - Debouncing rules were derived from real captures: 3-second `free` + 6 A after a reboot, 6-second `switch` flicker on unplug, 0 A "charging" after the car unlocks. See the fixture-based regression test in `tests/test_replay.py`.
+- The phase currents ramp up one DP at a time (several seconds apart), so "charging started" and "resumed" messages are composed 10 s after the decision, from the settled values.
+- An abrupt stop with the switch still on is reported as "car ended charging". The bot sees only the charger side: it cannot tell a timer or a car-side fault (red light on the car) from a full battery. A gradual power decline is reported as "charging complete".
 
 ---
 

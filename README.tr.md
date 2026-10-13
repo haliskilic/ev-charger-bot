@@ -101,7 +101,7 @@ Oturum: ~19,80 kWh · 1 sa 52 dk şarj · ort. 10,60 kW
 ```
 ```
 ⏹ Araç şarjı sonlandırdı · 18:22
-Güç aniden kesildi (batarya dolu olabilir).
+Güç aniden kesildi: şarjı araç durdurdu (zamanlayıcı, araç tarafında hata ya da dolu batarya olabilir).
 Oturum: ~0,54 kWh · 7 dk şarj · ort. 4,64 kW
 ```
 ```
@@ -337,9 +337,11 @@ Proje dizininden, venv'in Python'uyla çalıştırın, örn. `venv/bin/python -m
 
 - `work_state` (DP3) referans cihazda yalnızca `charger_free` / `charger_wait` / `charger_charging` gösterdi; bot diğer enum değerlerini de tanır.
 - Faz başına gerilim/akım/güç 7 baytlık ham kayıtlarla (DP6/7/8) yaklaşık 6 sn'de bir gelir; toplamı `power_total` (DP9) ile birebir eşleşir.
-- Oturum sayacı (DP25) yalnızca çıkarmada ya da cihaz kendi kaydını kapattığında gelir (şarj başladıktan **12 saat** sonra ya da şarjsız 20 saat takılı kalınca). Bot bu yüzden güç ölçümlerini de entegre eder ve iki değeri birlikte gösterir.
+- Oturum sayacı (DP25) yalnızca çıkarmada ya da cihaz kendi kaydını kapattığında gelir (şarj başladıktan **12 saat** sonra ya da şarjsız 20 saat takılı kalınca). Bot bu yüzden güç ölçümlerini de entegre eder ve iki değeri birlikte gösterir. Fişin hızlıca çıkarılıp takılması da bir kaydı kapatır; bir oturum birden fazla kayda yayılabilir, oturum toplamı kayıtların toplamıdır ve özet parçaları ayrıca listeler.
 - Cihaz çoğu değişikliği kendiliğinden gönderir ama hepsini değil (örn. `charging` bazen güçten geç gelir); bot hem dinler **hem** sorgular (şarjda 20 sn / boşta 60 sn). Smart Life uygulamasının ikinci bağlantısı botu etkilemez.
 - Titreme filtreleri gerçek kayıtlardan türetildi: yeniden başlatmada 3 sn `free` + 6 A, çıkarmada 6 sn `switch` titremesi, araç kilidi açılınca 0 A ile "charging". `tests/test_replay.py` bu kaydı regresyon testi olarak kullanır.
+- Faz akımları birkaç saniye arayla, tek tek gelir; bu yüzden "şarj başladı" ve "şarj devam ediyor" mesajları karardan 10 sn sonra, oturmuş değerlerle oluşturulur.
+- Anahtar açıkken gücün aniden kesilmesi "araç şarjı sonlandırdı" olarak bildirilir. Bot yalnızca cihaz tarafını görür: zamanlayıcıyı ya da araç tarafındaki hatayı (araçta kırmızı ışık) dolu bataryadan ayırt edemez. Gücün kademeli düşmesi ise "şarj tamamlandı" olarak bildirilir.
 
 ---
 

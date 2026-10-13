@@ -36,6 +36,7 @@ SCHEDULED_AFTER_S = 30
 WARN_PERSIST_S = 60
 WARN_REPEAT_S = 30 * 60
 SAMPLE_IDLE_S = 60
+START_SETTLE_S = 10  # phase currents arrive one DP at a time; describe a start/resume only after they settle
 
 
 class Sink(Protocol):
@@ -110,8 +111,9 @@ class Session:
     unplug_ts: float | None = None
     energy_calc: float = 0.0
     energy_by_band: dict = field(default_factory=lambda: {b: 0.0 for b in BANDS})
-    energy_device: float | None = None
-    energy_device2: float | None = None
+    energy_device: float | None = None   # first charger record (DP25) received for the session
+    energy_device2: float | None = None  # sum of any further records (12 h close, quick unplug/replug)
+    device_records: list = field(default_factory=list)  # every DP25 value of the session, in order
     device_closed_ts: float | None = None
     peak_kw: float = 0.0
     charge_s_closed: float = 0.0
@@ -131,8 +133,16 @@ class Session:
         extra = (now - self.seg.start_ts) if self.seg else 0.0
         return self.charge_s_closed + extra
 
+    def energy_device_total(self) -> float | None:
+        """Sum of the charger's own records; the charger closes a record on unplug, after 12 h of charging,
+        and when the cable is re-plugged quickly, so one session can span several records."""
+        if self.energy_device is None:
+            return None
+        return self.energy_device + (self.energy_device2 or 0.0)
+
     def energy_best(self) -> float:
-        return self.energy_device if self.energy_device is not None else self.energy_calc
+        total = self.energy_device_total()
+        return total if total is not None else self.energy_calc
 
     def avg_kw(self, now: float) -> float:
         s = self.charge_s(now)
@@ -201,6 +211,7 @@ class Monitor:
         self._offline_since: float | None = None
         self._last_cur_set_change = 0.0
         self._dp25_pending: tuple[float, float] | None = None  # (ts, kWh) received while plugged, decision pending
+        self._start_msg: tuple[float, bool, float] | None = None  # (emit_at, first_segment, start_ts) deferred start/resume message
         v = db.get_meta("last_dp25")
         self._last_dp25: int | None = int(v) if v else None
 
@@ -213,6 +224,7 @@ class Monitor:
         self._integrate(ts)
         self._react(ts, changes)
         self._evaluate(ts)
+        self._flush_start_msg(ts)
         self._maybe_sample(ts)
 
     def on_tick(self, ts: float) -> None:
@@ -220,6 +232,7 @@ class Monitor:
             return
         self._integrate(ts)
         self._evaluate(ts)
+        self._flush_start_msg(ts)
         self._maybe_sample(ts)
         if ts - self._last_persist >= 60:
             self._persist_session()
@@ -353,6 +366,9 @@ class Monitor:
         s.scheduled_notified = bool(counters.get("scheduled_notified", False))
         s.nocharge_notified = bool(counters.get("nocharge_notified", False))
         s.last_end_reason = counters.get("last_end_reason")
+        s.device_records = [float(v) for v in counters.get("device_records", [])]
+        if not s.device_records and s.energy_device is not None:  # rows written before records were kept
+            s.device_records = [s.energy_device] + ([s.energy_device2] if s.energy_device2 is not None else [])
         s.notes = [n for n in (json.loads(row["notes_json"]) if row["notes_json"] else []) if isinstance(n, dict)]
         return s
 
@@ -382,7 +398,7 @@ class Monitor:
             counters_json=json.dumps({
                 "counters": s.counters, "interim_mark": s.interim_mark, "seg_count": s.seg_count,
                 "scheduled_notified": s.scheduled_notified, "nocharge_notified": s.nocharge_notified,
-                "last_end_reason": s.last_end_reason,
+                "last_end_reason": s.last_end_reason, "device_records": [round(v, 2) for v in s.device_records],
             }, ensure_ascii=False),
             live_message_id=s.live_message_id,
             avg_kw=round(s.avg_kw(now), 3),
@@ -491,10 +507,11 @@ class Monitor:
 
     @staticmethod
     def _assign_device_energy(s: Session, kwh: float) -> None:
+        s.device_records.append(kwh)
         if s.energy_device is None:
             s.energy_device = kwh
         else:
-            s.energy_device2 = kwh
+            s.energy_device2 = (s.energy_device2 or 0.0) + kwh
 
     def _resolve_dp25(self, ts: float) -> None:
         if self._dp25_pending is None or not self.sess:
@@ -645,22 +662,38 @@ class Monitor:
         self.sink.fast(True)
         if quiet:
             return
+        if not first:
+            s.counters["resumes"] += 1
+        # The device reports the phase currents one DP at a time, so the message is composed
+        # START_SETTLE_S later (or when the segment closes first) from the settled values.
+        self._start_msg = (ts + START_SETTLE_S, first, ts)
+        self._persist_session()
+
+    def _flush_start_msg(self, ts: float, force: bool = False) -> None:
+        if self._start_msg is None:
+            return
+        emit_at, first, start_ts = self._start_msg
+        if ts < emit_at and not force:
+            return
+        self._start_msg = None
+        s = self.sess
+        if not s:
+            return
         if first:
-            self._emit(ts, "charging_started", self.R.charging_started(ts, self.st))
+            self._emit(ts, "charging_started", self.R.charging_started(start_ts, self.st))
             self.sink.live_create(s)
         else:
-            s.counters["resumes"] += 1
-            self._emit(ts, "resumed", self.R.resumed(ts, self.st))
+            self._emit(ts, "resumed", self.R.resumed(start_ts, self.st))
             if s.live_message_id:
                 self.sink.live_update(s)
             else:
                 self.sink.live_create(s)
-        self._persist_session()
 
     def _close_segment(self, end_ts: float, reason: str) -> None:
         s = self.sess
         if not s or not s.seg:
             return
+        self._flush_start_msg(end_ts, force=True)  # keep "started" ahead of the stop message on very short charges
         seg = s.seg
         end_ts = max(end_ts, seg.start_ts)
         s.charge_s_closed += end_ts - seg.start_ts

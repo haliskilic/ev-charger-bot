@@ -121,6 +121,15 @@ class Reports:
             return self.L("n_device_record", time=self.F.hm(n.get("t")), kwh=self.F.kwh(n.get("kwh")))
         return self.L("n_" + c)
 
+    def notes_text(self, notes: list, limit: int = 4) -> str:
+        """Render notes in order, collapsing repeats into 'text (n×)'."""
+        counts: dict[str, int] = {}
+        for n in notes:
+            t = self.note_text(n)
+            counts[t] = counts.get(t, 0) + 1
+        items = [f"{t} ({k}×)" if k > 1 else t for t, k in counts.items()]
+        return "; ".join(items[:limit])
+
     # ---- events ----
     def bot_restarted(self, ts: float, st: "DeviceState", sess: "Session | None") -> str:
         head = self.L("bot_restarted", date=self.F.date_short(ts), time=self.hm(ts), online=self.L("online" if st.online else "offline"), desc=esc(self._desc(st)))
@@ -276,7 +285,7 @@ class Reports:
                 extra += self.L("short_warnings", n=len(s.warnings))
             text = self.L("unplugged_short", time=self.hm(unplug_ts), dur=self.dur(plugged_s), extra=extra)
             if s.notes:
-                text += "\n" + self.L("summary_note", text=esc("; ".join(self.note_text(n) for n in s.notes[:3])))
+                text += "\n" + self.L("summary_note", text=esc(self.notes_text(s.notes, 3)))
             return text
         lines = [self.L("unplugged", time=self.hm(unplug_ts)), "", self.L("summary_head", date=self.F.date_short(s.plug_ts))]
         if s.charge_start_ts:
@@ -286,13 +295,17 @@ class Reports:
         else:
             lines.append(self.L("summary_times_nocharge", plug=self.hm(s.plug_ts), unplug=self.hm(unplug_ts), dur=self.dur(plugged_s)))
         lines.append("")
-        if s.energy_device is not None:
-            lines.append(self.L("summary_energy_device", kwh=self.F.kwh(s.energy_device)))
+        device_total = s.energy_device_total()
+        if device_total is not None:
+            records = s.device_records or [s.energy_device]
+            if len(records) > 1:  # the charger closed more than one record during this session
+                parts = " + ".join(self.F.num(v, 2) for v in records)
+                lines.append(self.L("summary_energy_device_multi", kwh=self.F.kwh(device_total), n=len(records), parts=parts))
+            else:
+                lines.append(self.L("summary_energy_device", kwh=self.F.kwh(device_total)))
             if s.energy_calc > 0:
-                diff = abs(s.energy_device - s.energy_calc) / s.energy_device * 100.0 if s.energy_device > 0 else 0.0
+                diff = abs(device_total - s.energy_calc) / device_total * 100.0 if device_total > 0 else 0.0
                 lines.append(self.L("summary_energy_calc", kwh=self.F.kwh(s.energy_calc)) + (self.L("summary_energy_diff", pct=self.F.pct(diff)) if diff >= 0.5 else ""))
-            if s.energy_device2 is not None and abs(s.energy_device2 - s.energy_device) > 0.005:
-                lines.append(self.L("summary_energy_device2", kwh=self.F.kwh(s.energy_device2)))
         else:
             lines.append(self.L("summary_energy_calc_only", kwh=self.F.kwh(s.energy_calc)))
         if s.charge_start_ts:
@@ -315,7 +328,7 @@ class Reports:
         if s.warnings:
             lines.extend(f"  · {esc(self.warning_text(w))}" for w in s.warnings[:8])
         if s.notes:
-            lines.append(self.L("summary_note", text=esc("; ".join(self.note_text(n) for n in s.notes[:4]))))
+            lines.append(self.L("summary_note", text=esc(self.notes_text(s.notes))))
         return "\n".join(lines)
 
     def _scaled_bands(self, s: "Session", best: float) -> dict[str, float]:
